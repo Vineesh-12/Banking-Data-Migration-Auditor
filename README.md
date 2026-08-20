@@ -1,24 +1,34 @@
 # Banking Data Migration Auditor
 
-This project is an **Automated Data Migration Audit Tool** designed to scan a banking database for data corruption (migration errors), export those errors, and use Python to analyze what went wrong.
+An automated ETL auditing tool that scans migrated banking data for inconsistencies, extracts corrupted records, and generates analytical reports.
 
-This directly aligns with the responsibilities of troubleshooting and resolving customer data migration problems in a Fintech environment.
+## Project Architecture
 
-## Tech Stack
-*   **MS SQL / T-SQL:** For database storage and advanced error identification logic.
-*   **.NET (C#):** For automation, orchestration, and extracting the corrupted records.
-*   **Python:** For performing data analysis on the extracted error logs.
+1. **SQL Backend**: T-SQL stored procedures actively hunt for data anomalies (e.g., negative balances, missing routing numbers) in the MS SQL database.
+2. **.NET Engine**: A C# application acts as the orchestrator. It connects to the database, executes the audit procedures, and extracts bad data into a CSV format.
+3. **Python Analyzer**: A Python script parses the output CSV to categorize the errors and generate a readable summary report.
+4. **Automation**: A PowerShell script registers the .NET application with Windows Task Scheduler for daily automated runs.
 
-## Phases
+## Folder Structure
+- `database/`: SQL scripts for schema creation, mock data insertion, and audit logic.
+- `src/`: C# source code for the .NET extraction engine.
+- `scripts/`: Python analysis script and PowerShell automation script.
 
-*   [x] **Phase 1:** Environment Setup & Mock Data Creation (MS SQL)
-*   [x] **Phase 2:** Database Logic & Error Identification (T-SQL)
-*   [x] **Phase 3:** Automation & Extraction (.NET)
-*   [x] **Phase 4:** Data Analysis & Reporting (Python)
-*   [x] **Phase 5:** Final Integration & Scheduling
+## Setup Instructions
 
-## Phase 1: Setup Instructions
+1. **Database**
+   - Run `database/schema.sql` to create the table.
+   - Run `database/mock_data.sql` to populate some test data.
+   - Run `database/sp_audit.sql` to create the stored procedure.
 
-1.  Open SQL Server Management Studio (SSMS).
-2.  Execute `Phase1_DatabaseSetup/01_Create_Schema.sql` to create the database and table.
-3.  Execute `Phase1_DatabaseSetup/02_Insert_MockData.sql` to populate the table with dummy data (which intentionally includes migration errors).
+2. **Run the Audit**
+   - Ensure you have the .NET 8 SDK installed.
+   - Run the application:
+     ```bash
+     cd src
+     dotnet run
+     ```
+   - This will extract `migration_errors.csv` and automatically trigger the Python script to create `audit_report.txt`.
+
+3. **Schedule Automation**
+   - Run `scripts/setup_scheduler.ps1` as Administrator to schedule the audit to run daily.

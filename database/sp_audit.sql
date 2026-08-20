@@ -1,8 +1,3 @@
--- =======================================================
--- Phase 2: Database Logic & Error Identification
--- Description: Stored Procedure to audit migration data and find errors.
--- =======================================================
-
 USE BankingAuditDB;
 GO
 
@@ -17,7 +12,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Select all rows that violate banking business rules
     SELECT 
         Id,
         AccountID,
@@ -31,7 +25,6 @@ BEGIN
             WHEN RoutingNumber IS NULL OR LTRIM(RTRIM(RoutingNumber)) = '' THEN 'Error: Missing/Blank Routing Number'
             WHEN AccountType IS NULL THEN 'Error: Missing Account Type'
             WHEN Balance > 10000000 THEN 'Warning: Unusually High Balance - Needs Review'
-            -- We use a subquery to identify duplicate Account IDs
             WHEN AccountID IN (
                 SELECT AccountID 
                 FROM dbo.MigratedAccounts 
@@ -56,7 +49,3 @@ BEGIN
         );
 END
 GO
-
--- To test the stored procedure manually in SSMS, you can run:
--- EXEC dbo.sp_AuditMigrationData;
--- GO
