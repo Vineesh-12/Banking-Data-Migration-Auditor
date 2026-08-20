@@ -55,6 +55,9 @@ namespace DataMigrationAuditor
                                     }
                                     Console.WriteLine($"Audit complete! Found {errorCount} errors.");
                                     Console.WriteLine($"Errors exported to: {exportFilePath}");
+                                    
+                                    // Phase 5 Integration: Automatically run the Python analysis script
+                                    RunPythonAnalysisScript();
                                 }
                             }
                             else
@@ -68,6 +71,42 @@ namespace DataMigrationAuditor
             catch (Exception ex)
             {
                 Console.WriteLine("An error occurred during the audit process:");
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        static void RunPythonAnalysisScript()
+        {
+            Console.WriteLine("Triggering Python data analysis script...");
+            try
+            {
+                // The python script is located in the Phase4 folder relative to the executable
+                string pythonScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Phase4_DataAnalysis", "analyze_errors.py");
+                
+                // Fallback for simple execution
+                if (!File.Exists(pythonScriptPath)) 
+                {
+                    pythonScriptPath = Path.Combine("..", "Phase4_DataAnalysis", "analyze_errors.py");
+                }
+
+                System.Diagnostics.ProcessStartInfo start = new System.Diagnostics.ProcessStartInfo();
+                start.FileName = "python"; // Assumes python is in the system PATH
+                start.Arguments = $"\"{pythonScriptPath}\"";
+                start.UseShellExecute = false;
+                start.RedirectStandardOutput = true;
+                
+                using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(start))
+                {
+                    using (StreamReader reader = process.StandardOutput)
+                    {
+                        string result = reader.ReadToEnd();
+                        Console.WriteLine(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to execute Python script. Ensure Python is installed and in your PATH.");
                 Console.WriteLine(ex.Message);
             }
         }
