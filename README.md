@@ -12,7 +12,7 @@ This directly aligns with the responsibilities of troubleshooting and resolving 
 ## Phases
 
 *   [x] **Phase 1:** Environment Setup & Mock Data Creation (MS SQL)
-*   [ ] **Phase 2:** Database Logic & Error Identification (T-SQL)
+*   [x] **Phase 2:** Database Logic & Error Identification (T-SQL)
 *   [ ] **Phase 3:** Automation & Extraction (.NET)
 *   [ ] **Phase 4:** Data Analysis & Reporting (Python)
 *   [ ] **Phase 5:** Final Integration & Scheduling
